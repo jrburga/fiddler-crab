@@ -1,15 +1,21 @@
 (function (global) {
   'use strict';
 
+  const PLAY_SVG = `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
+  const STOP_SVG = `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>`;
+
   const registry = [];
   let currentIndex = 0;
   let currentStep = 0;
+  let isPlaying = false;
   let root = null;
   let slideStyleEl = null;
 
   function renderSlide(index) {
     const slide = registry[index];
     if (!slide) return;
+
+    if (isPlaying) stopAnimation();
 
     currentStep = 0;
     root.innerHTML = '';
@@ -32,11 +38,45 @@
     if (typeof slide.render === 'function') slide.render(el);
 
     updateCounter();
+    updatePlayBtn();
   }
 
   function updateCounter() {
     const el = document.getElementById('deck-counter');
     if (el) el.textContent = `${currentIndex + 1} / ${registry.length}`;
+  }
+
+  function updatePlayBtn() {
+    const btn = document.getElementById('deck-play');
+    if (!btn) return;
+    const slide = registry[currentIndex];
+    const hasAnim = slide && typeof slide.animation === 'object';
+    btn.style.display = hasAnim ? 'flex' : 'none';
+    btn.innerHTML = isPlaying ? STOP_SVG : PLAY_SVG;
+    btn.title = isPlaying ? 'Stop' : 'Play animation';
+  }
+
+  function playAnimation() {
+    const slide = registry[currentIndex];
+    if (!slide || !slide.animation) return;
+    isPlaying = true;
+    updatePlayBtn();
+    const el = root.querySelector('.deck-slide');
+    slide.animation.play(el);
+  }
+
+  function stopAnimation() {
+    const slide = registry[currentIndex];
+    if (!slide || !slide.animation) return;
+    isPlaying = false;
+    updatePlayBtn();
+    const el = root.querySelector('.deck-slide');
+    if (typeof slide.animation.stop === 'function') slide.animation.stop(el);
+  }
+
+  function toggleAnimation() {
+    if (isPlaying) stopAnimation();
+    else playAnimation();
   }
 
   function next() {
@@ -141,11 +181,14 @@
             </svg>
           </button>
         </div>
-        <div></div>
+        <div id="deck-toolbar-end">
+          <button id="deck-play" style="display:none"></button>
+        </div>
       `;
       toolbar.querySelector('#deck-export-btn').addEventListener('click', exportStandalone);
       toolbar.querySelector('#deck-prev').addEventListener('click', prev);
       toolbar.querySelector('#deck-next').addEventListener('click', next);
+      toolbar.querySelector('#deck-play').addEventListener('click', toggleAnimation);
       document.body.appendChild(toolbar);
 
       // swipe support
@@ -178,11 +221,14 @@
     next,
     prev,
     goTo,
+    play: playAnimation,
+    stop: stopAnimation,
     export: exportStandalone,
 
     get current() { return registry[currentIndex]; },
     get index() { return currentIndex; },
     get total() { return registry.length; },
+    get playing() { return isPlaying; },
   };
 
   global.Deck = Deck;

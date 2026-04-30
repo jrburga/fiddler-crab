@@ -4,17 +4,16 @@ Deck.slide({
     .demo-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
-      margin-top: 2rem;
-      width: 300px;
+      gap: clamp(6px, 1.5cqw, 14px);
+      margin-top: 1.5rem;
+      width: clamp(160px, 40cqw, 320px);
     }
     .demo-dot {
-      width: 44px;
-      height: 44px;
+      aspect-ratio: 1;
       background: #4a9eff;
       border-radius: 6px;
-      opacity: 0.2;
-      transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 0.15;
+      transition: transform 0.08s linear;
     }
   `,
   render(el) {
@@ -22,38 +21,46 @@ Deck.slide({
       `<div class="demo-dot" data-i="${i}"></div>`
     ).join('');
     el.innerHTML = `
-      <h2>Custom animations</h2>
+      <h2>Playable animations</h2>
       <p data-step="hint" class="deck-hidden">
-        Steps call arbitrary JS — CSS transitions do the rest
+        Press play to start — the animation loops until stopped
       </p>
       <div class="demo-grid">${dots}</div>
     `;
   },
   steps: [
     el => el.querySelector('[data-step="hint"]').classList.replace('deck-hidden', 'deck-visible'),
-
-    // reveal all dots with a staggered cascade
-    el => el.querySelectorAll('.demo-dot').forEach((dot, i) =>
-      setTimeout(() => { dot.style.opacity = '1'; }, i * 25)
-    ),
-
-    // morph to circles + shift color
-    el => el.querySelectorAll('.demo-dot').forEach((dot, i) =>
-      setTimeout(() => {
-        dot.style.borderRadius = '50%';
-        dot.style.background = '#f84';
-      }, i * 18)
-    ),
-
-    // radial scale burst from center
-    el => el.querySelectorAll('.demo-dot').forEach((dot, i) => {
-      const row = Math.floor(i / 5);
-      const col = i % 5;
-      const dist = Math.hypot(col - 2, row - 2);
-      setTimeout(() => {
-        dot.style.transform = `scale(${1 + Math.max(0, 1.8 - dist) * 0.5})`;
-        dot.style.background = '#4f8';
-      }, dist * 60);
-    }),
   ],
+  animation: {
+    play(el) {
+      const dots = Array.from(el.querySelectorAll('.demo-dot'));
+      dots.forEach(d => { d.style.opacity = '1'; });
+      let t = 0;
+      let frame;
+      function tick() {
+        t += 0.06;
+        dots.forEach((dot, i) => {
+          const row = Math.floor(i / 5);
+          const col = i % 5;
+          const phase = (col + row) * 0.5;
+          const v = 0.5 + 0.5 * Math.sin(t + phase);
+          dot.style.transform = `scale(${0.55 + v * 0.7})`;
+          dot.style.background = `hsl(${210 + v * 80}, 80%, 60%)`;
+        });
+        frame = requestAnimationFrame(tick);
+      }
+      frame = requestAnimationFrame(tick);
+      el._stopAnim = () => {
+        cancelAnimationFrame(frame);
+        dots.forEach(d => {
+          d.style.transform = '';
+          d.style.background = '#4a9eff';
+          d.style.opacity = '0.15';
+        });
+      };
+    },
+    stop(el) {
+      if (el._stopAnim) el._stopAnim();
+    },
+  },
 });

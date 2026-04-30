@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation Presentation Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            overflow: hidden;
+        }
+
+        /* === LAYOUT === */
+        .app {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: #1a1a1a;
+            border-right: 1px solid #2a2a2a;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 16px;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-title {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #888;
+        }
+
+        .add-slide-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #333;
+            background: transparent;
+            color: #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .add-slide-btn:hover {
+            background: #2a2a2a;
+            border-color: #444;
+        }
+
+        .slides-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-right: 4px;
+        }
+
+        .slides-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .slides-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .slides-list::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        .slides-list::-webkit-scrollbar-thumb:hover {
+            background: #444;
+        }
+
+        .slide-thumbnail {
+            padding: 12px;
+            border: 2px solid transparent;
+            background: #252525;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .slide-thumbnail:hover {
+            background: #2a2a2a;
+            border-color: #333;
+        }
+
+        .slide-thumbnail.active {
+            border-color: #4a9eff;
+            background: #1a2a3a;
+        }
+
+        .slide-number {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .slide-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #e0e0e0;
+            word-break: break-word;
+            line-height: 1.3;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #0f0f0f;
+        }
+
+        /* === EDITOR VIEW === */
+        .editor-view {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 24px;
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .editor-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title-input {
+            font-size: 32px;
+            font-weight: 700;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid #333;
+            color: #e0e0e0;
+            padding: 8px 0;
+            transition: border-color 0.2s;
+            width: 100%;
+        }
+
+        .editor-title-input:focus {
+            outline: none;
+            border-bottom-color: #4a9eff;
+        }
+
+        .start-presentation-btn {
+            padding: 10px 24px;
+            background: #4a9eff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .start-presentation-btn:hover {
+            background: #3a8eef;
+        }
+
+        .editor-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .editor-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+
+        .scene-placeholder {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            background: #1a1a1a;
+            border: 2px dashed #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 14px;
+            overflow: hidden;
+        }
+
+        .notes-input {
+            width: 100%;
+            min-height: 150px;
+            padding: 12px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #e0e0e0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 13px;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        .notes-input:focus {
+            outline: none;
+            border-color: #4a9eff;
+        }
+
+        /* === PRESENTATION VIEW === */
+        .presentation-view {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 24px;
+            gap: 16px;
+        }
+
+        .presentation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .presentation-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .back-btn {
+            padding: 8px 16px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background: #2a2a2a;
+            border-color: #444;
+        }
+
+        .presentation-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-height: 0;
+        }
+
+        .scene-view {
+            flex: 1;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .scene-content {
+            width: 100%;
+            height: 100%;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #666;
+        }
+
+        .presentation-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 10px 12px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            border: 1px solid #333;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .control-btn:hover {
+            background: #2a2a2a;
+            border-color: #444;
+        }
+
+        .control-btn.primary {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            color: #fff;
+        }
+
+        .control-btn.primary:hover {
+            background: #3a8eef;
+            border-color: #3a8eef;
+        }
+
+        /* Icon Button Styles */
+        .icon-button-group {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .icon-btn {
+            width: 48px;
+            height: 48px;
+            padding: 0;
+            background: #1a1a1a;
+            color: #999;
+            border: 1px solid #333;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: #2a2a2a;
+            border-color: #444;
+            color: #e0e0e0;
+        }
+
+        .icon-btn.primary {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            color: #fff;
+        }
+
+        .icon-btn.primary:hover {
+            background: #3a8eef;
+            border-color: #3a8eef;
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .slide-info {
+            display: none;
+        }
+
+        .slide-notes {
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 4px;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            color: #999;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .slide-notes::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .slide-notes::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 2px;
+        }
+
+        /* === HIDDEN STATE === */
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- SIDEBAR: Slide List -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">Slides</div>
+                <button class="add-slide-btn" id="addSlideBtn" title="Add new slide">+</button>
+            </div>
+            <div class="slides-list" id="slidesList"></div>
+        </div>
+
+        <!-- MAIN CONTENT: Editor or Presentation View -->
+        <div class="main-content">
+            <!-- EDITOR VIEW -->
+            <div id="editorView" class="editor-view">
+                <div class="editor-header">
+                    <input
+                        type="text"
+                        id="slideTitle"
+                        class="editor-title-input"
+                        placeholder="Slide Title"
+                    />
+                    <button class="start-presentation-btn" id="startPresentationBtn">
+                        Start Presentation
+                    </button>
+                </div>
+
+                <div class="editor-section">
+                    <div class="editor-label">Preview</div>
+                    <div class="scene-placeholder" id="slidePreview">
+                        <div id="previewContent">No preview yet</div>
+                    </div>
+                </div>
+
+                <div class="editor-section">
+                    <div class="editor-label">Notes</div>
+                    <textarea
+                        id="slideNotes"
+                        class="notes-input"
+                        placeholder="Add notes to reference during presentation..."
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- PRESENTATION VIEW -->
+            <div id="presentationView" class="presentation-view hidden">
+                <div class="presentation-header">
+                    <div class="presentation-title" id="presentationTitle">Slide 1</div>
+                    <button class="back-btn" id="backToEditorBtn">Back to Editor</button>
+                </div>
+
+                <div class="presentation-content">
+                    <!-- Scene View (centered, takes up space) -->
+                    <div class="scene-view" id="sceneView">
+                        <div class="scene-content" id="sceneContent">
+                            Scene animations render here
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer: Controls and Notes at Bottom -->
+                <div class="presentation-footer">
+                    <!-- Animation Controls -->
+                    <div class="control-group">
+                        <div class="icon-button-group">
+                            <button class="icon-btn" id="prevSlideBtn" title="Previous slide">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="15 18 9 12 15 6"></polyline>
+                                </svg>
+                            </button>
+                            <button class="icon-btn primary" id="playBtn" title="Play animation">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" id="stopBtn" title="Pause animation">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <rect x="6" y="4" width="4" height="16"></rect>
+                                    <rect x="14" y="4" width="4" height="16"></rect>
+                                </svg>
+                            </button>
+                            <button class="icon-btn" id="nextSlideBtn" title="Next slide">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="9 18 15 12 9 6"></polyline>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="control-group">
+                        <div class="control-label">Notes</div>
+                        <div class="slide-notes" id="presentationNotes">
+                            (No notes for this slide)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === STATE ===
+        let slides = [];
+        let currentSlideIndex = 0;
+
+        const STORAGE_KEY = 'animation-presentation-slides';
+
+        // === DOM ELEMENTS ===
+        const slidesList = document.getElementById('slidesList');
+        const addSlideBtn = document.getElementById('addSlideBtn');
+        const editorView = document.getElementById('editorView');
+        const presentationView = document.getElementById('presentationView');
+        const slideTitleInput = document.getElementById('slideTitle');
+        const slideNotesInput = document.getElementById('slideNotes');
+        const previewContent = document.getElementById('previewContent');
+        const startPresentationBtn = document.getElementById('startPresentationBtn');
+        const backToEditorBtn = document.getElementById('backToEditorBtn');
+        const playBtn = document.getElementById('playBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const prevSlideBtn = document.getElementById('prevSlideBtn');
+        const nextSlideBtn = document.getElementById('nextSlideBtn');
+        const presentationTitle = document.getElementById('presentationTitle');
+        const presentationNotes = document.getElementById('presentationNotes');
+        const sceneContent = document.getElementById('sceneContent');
+
+        // === INITIALIZATION ===
+        function init() {
+            loadSlides();
+            if (slides.length === 0) {
+                addNewSlide();
+            }
+            selectSlide(0);
+            attachEventListeners();
+        }
+
+        function attachEventListeners() {
+            addSlideBtn.addEventListener('click', addNewSlide);
+            slideTitleInput.addEventListener('input', updateCurrentSlide);
+            slideNotesInput.addEventListener('input', updateCurrentSlide);
+            startPresentationBtn.addEventListener('click', startPresentation);
+            backToEditorBtn.addEventListener('click', stopPresentation);
+            playBtn.addEventListener('click', () => console.log('Play animation'));
+            stopBtn.addEventListener('click', () => console.log('Stop animation'));
+            prevSlideBtn.addEventListener('click', goToPrevSlide);
+            nextSlideBtn.addEventListener('click', goToNextSlide);
+        }
+
+        // === SLIDE MANAGEMENT ===
+        function addNewSlide() {
+            const newSlide = {
+                id: Date.now(),
+                title: `Slide ${slides.length + 1}`,
+                notes: '',
+                sceneData: null,
+                preview: null, // SVG or image preview
+            };
+            slides.push(newSlide);
+            saveSlides();
+            renderSlidesList();
+            selectSlide(slides.length - 1);
+        }
+
+        function deleteSlide(index) {
+            if (slides.length === 1) {
+                alert('Cannot delete the last slide.');
+                return;
+            }
+            slides.splice(index, 1);
+            saveSlides();
+            renderSlidesList();
+            const newIndex = Math.min(index, slides.length - 1);
+            selectSlide(newIndex);
+        }
+
+        function selectSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            currentSlideIndex = index;
+            updateEditorView();
+            renderSlidesList();
+        }
+
+        function updateCurrentSlide() {
+            slides[currentSlideIndex].title = slideTitleInput.value;
+            slides[currentSlideIndex].notes = slideNotesInput.value;
+            saveSlides();
+            renderSlidesList();
+        }
+
+        function updateEditorView() {
+            const slide = slides[currentSlideIndex];
+            slideTitleInput.value = slide.title;
+            slideNotesInput.value = slide.notes;
+            
+            // Display preview if available, otherwise show placeholder
+            if (slide.preview) {
+                previewContent.innerHTML = slide.preview;
+            } else {
+                previewContent.innerHTML = 'No preview yet';
+                previewContent.style.color = '#666';
+            }
+        }
+
+        // === RENDERING ===
+        function renderSlidesList() {
+            slidesList.innerHTML = '';
+            slides.forEach((slide, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = `slide-thumbnail ${
+                    index === currentSlideIndex ? 'active' : ''
+                }`;
+                thumbnail.innerHTML = `
+                    <div class="slide-number">Slide ${index + 1}</div>
+                    <div class="slide-title">${slide.title}</div>
+                `;
+                thumbnail.addEventListener('click', () => selectSlide(index));
+                thumbnail.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    if (confirm('Delete this slide?')) {
+                        deleteSlide(index);
+                    }
+                });
+                slidesList.appendChild(thumbnail);
+            });
+        }
+
+        // === PRESENTATION MODE ===
+        function startPresentation() {
+            editorView.classList.add('hidden');
+            presentationView.classList.remove('hidden');
+            document.querySelector('.sidebar').classList.add('hidden');
+            updatePresentationView();
+        }
+
+        function stopPresentation() {
+            presentationView.classList.add('hidden');
+            editorView.classList.remove('hidden');
+            document.querySelector('.sidebar').classList.remove('hidden');
+        }
+
+        function updatePresentationView() {
+            const slide = slides[currentSlideIndex];
+            presentationTitle.textContent = slide.title;
+            presentationNotes.textContent = slide.notes || '(No notes for this slide)';
+            sceneContent.textContent = `Scene for: ${slide.title}`;
+        }
+
+        function goToPrevSlide() {
+            if (currentSlideIndex > 0) {
+                selectSlide(currentSlideIndex - 1);
+                updatePresentationView();
+            }
+        }
+
+        function goToNextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                selectSlide(currentSlideIndex + 1);
+                updatePresentationView();
+            }
+        }
+
+        // === PERSISTENCE ===
+        function saveSlides() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(slides));
+        }
+
+        function loadSlides() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            slides = stored ? JSON.parse(stored) : [];
+        }
+
+        // === START ===
+        init();
+    </script>
+</body>
+</html>

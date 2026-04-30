@@ -77,7 +77,14 @@
     isPlaying = true;
     updatePlayBtn();
     const el = root.querySelector('.deck-slide');
-    slide.animation.play(el);
+    const capturedIndex = currentIndex;
+    slide.animation.play(el, () => {
+      // done() — called by the slide when animation finishes naturally
+      if (currentIndex === capturedIndex && isPlaying) {
+        isPlaying = false;
+        updatePlayBtn();
+      }
+    });
   }
 
   function stopAnimation() {

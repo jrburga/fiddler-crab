@@ -15,7 +15,7 @@
     if (!root) return;
     const scale = Math.min(root.offsetWidth / 1600, root.offsetHeight / 900);
     const el = root.querySelector('.deck-slide');
-    if (el) el.style.transform = `translate(-50%, -50%) scale(${scale})`;
+    if (el) el.style.transform = `scale(${scale})`;
   }
 
   function renderSlide(index) {
@@ -200,7 +200,7 @@
       toolbar.querySelector('#deck-play').addEventListener('click', toggleAnimation);
       document.body.appendChild(toolbar);
 
-      window.addEventListener('resize', updateScale);
+      window.addEventListener('resize', () => requestAnimationFrame(updateScale));
 
       // swipe support
       let touchStartX = 0;
@@ -226,7 +226,7 @@
         }
       });
 
-      if (registry.length > 0) renderSlide(0);
+      if (registry.length > 0) requestAnimationFrame(() => renderSlide(0));
     },
 
     next,

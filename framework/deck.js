@@ -134,6 +134,24 @@
       exportBtn.addEventListener('click', exportStandalone);
       document.body.appendChild(exportBtn);
 
+      const controls = document.createElement('div');
+      controls.id = 'deck-controls';
+      controls.innerHTML = `
+        <button id="deck-prev" title="Previous slide">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <button id="deck-next" title="Next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      `;
+      controls.querySelector('#deck-prev').addEventListener('click', prev);
+      controls.querySelector('#deck-next').addEventListener('click', next);
+      document.body.appendChild(controls);
+
       document.addEventListener('keydown', e => {
         switch (e.key) {
           case 'ArrowRight':

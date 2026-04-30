@@ -94,6 +94,41 @@ html, body {
   border-color: #333;
 }
 
+#deck-controls {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+}
+
+#deck-controls button {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  background: #1a1a1a;
+  color: #999;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+#deck-controls button:hover {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+#deck-controls button svg {
+  width: 20px;
+  height: 20px;
+}
+
 /* Transition helpers for use in slides */
 .deck-hidden {
   opacity: 0;

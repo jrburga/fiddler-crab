@@ -154,6 +154,7 @@
       '</head>',
       '<body>',
       '<div id="deck-root"></div>',
+      '<script>window.__DECK_EXPORTED__=true;<\/script>',
       '<script>',
       jsTexts.join('\n\n'),
       'Deck.start();',
@@ -189,7 +190,7 @@
       const toolbar = document.createElement('div');
       toolbar.id = 'deck-toolbar';
       toolbar.innerHTML = `
-        <button id="deck-export-btn">Export</button>
+        ${window.__DECK_EXPORTED__ ? '' : '<button id="deck-export-btn">Export</button>'}
         <div id="deck-nav">
           <button id="deck-prev" title="Previous slide">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -208,7 +209,8 @@
           <span id="deck-counter-end" style="display:none"></span>
         </div>
       `;
-      toolbar.querySelector('#deck-export-btn').addEventListener('click', exportStandalone);
+      const exportBtn = toolbar.querySelector('#deck-export-btn');
+      if (exportBtn) exportBtn.addEventListener('click', exportStandalone);
       toolbar.querySelector('#deck-prev').addEventListener('click', prev);
       toolbar.querySelector('#deck-next').addEventListener('click', next);
       toolbar.querySelector('#deck-play').addEventListener('click', toggleAnimation);

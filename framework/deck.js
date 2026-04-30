@@ -190,18 +190,18 @@
     },
 
     start() {
-      // topbar
-      const topbar = document.createElement('div');
-      topbar.id = 'deck-topbar';
-      topbar.innerHTML = `<button id="deck-menu-btn" title="Slides">${MENU_SVG}</button>`;
-      document.body.appendChild(topbar);
-
       root = document.getElementById('deck-root');
       if (!root) {
         root = document.createElement('div');
         root.id = 'deck-root';
         document.body.appendChild(root);
       }
+
+      // topbar inserted before root so flex order is: topbar → root → toolbar
+      const topbar = document.createElement('div');
+      topbar.id = 'deck-topbar';
+      topbar.innerHTML = `<button id="deck-menu-btn" title="Slides">${MENU_SVG}</button>`;
+      root.parentNode.insertBefore(topbar, root);
 
       // slide menu overlay
       const menu = document.createElement('div');

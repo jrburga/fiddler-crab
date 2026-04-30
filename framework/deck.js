@@ -1,6 +1,10 @@
 (function (global) {
   'use strict';
 
+  // Capture framework directory at parse time (document.currentScript is only valid here)
+  const _scriptSrc = document.currentScript ? document.currentScript.src : '';
+  const _frameworkDir = _scriptSrc.replace(/[^/]*$/, '');
+
   const PLAY_SVG = `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
   const STOP_SVG = `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>`;
   const MENU_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
@@ -49,6 +53,24 @@
     updatePlayBtn();
     updateMenuActive();
     updateScale();
+  }
+
+  async function displayVersion() {
+    let info = window.__DECK_VERSION__;
+    if (!info && _frameworkDir) {
+      try { info = await fetch(_frameworkDir + 'version.json').then(r => r.json()); } catch (_) {}
+    }
+    if (!info) return;
+    const label = `v${info.version} · ${info.build}`;
+    if (window.__DECK_EXPORTED__) {
+      const meta = document.createElement('meta');
+      meta.name = 'deck-version';
+      meta.content = label;
+      document.head.appendChild(meta);
+    } else {
+      const el = document.getElementById('deck-version');
+      if (el) el.textContent = label;
+    }
   }
 
   function openMenu() {
@@ -151,6 +173,10 @@
       scriptTags.map(s => fetch(s.src).then(r => r.text()).catch(() => ''))
     );
 
+    let versionInfo = null;
+    try { versionInfo = await fetch(_frameworkDir + 'version.json').then(r => r.json()); } catch (_) {}
+    const versionScript = versionInfo ? `window.__DECK_VERSION__=${JSON.stringify(versionInfo)};` : '';
+
     const html = [
       '<!DOCTYPE html>',
       '<html lang="en">',
@@ -164,7 +190,7 @@
       '</head>',
       '<body>',
       '<div id="deck-root"></div>',
-      '<script>window.__DECK_EXPORTED__=true;<\/script>',
+      `<script>window.__DECK_EXPORTED__=true;${versionScript}<\/script>`,
       '<script>',
       jsTexts.join('\n\n'),
       'Deck.start();',
@@ -200,7 +226,10 @@
       // topbar inserted before root so flex order is: topbar → root → toolbar
       const topbar = document.createElement('div');
       topbar.id = 'deck-topbar';
-      topbar.innerHTML = `<button id="deck-menu-btn" title="Slides">${MENU_SVG}</button>`;
+      topbar.innerHTML = `
+        <button id="deck-menu-btn" title="Slides">${MENU_SVG}</button>
+        <span id="deck-version"></span>
+      `;
       root.parentNode.insertBefore(topbar, root);
 
       // slide menu overlay
@@ -287,6 +316,8 @@
             break;
         }
       });
+
+      displayVersion();
 
       if (registry.length > 0) requestAnimationFrame(() => renderSlide(0));
     },

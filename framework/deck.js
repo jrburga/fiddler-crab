@@ -124,33 +124,37 @@
         document.body.prepend(root);
       }
 
-      const counter = document.createElement('div');
-      counter.id = 'deck-counter';
-      document.body.appendChild(counter);
-
-      const exportBtn = document.createElement('button');
-      exportBtn.id = 'deck-export-btn';
-      exportBtn.textContent = 'Export';
-      exportBtn.addEventListener('click', exportStandalone);
-      document.body.appendChild(exportBtn);
-
-      const controls = document.createElement('div');
-      controls.id = 'deck-controls';
-      controls.innerHTML = `
-        <button id="deck-prev" title="Previous slide">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="15 18 9 12 15 6"></polyline>
-          </svg>
-        </button>
-        <button id="deck-next" title="Next">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="9 18 15 12 9 6"></polyline>
-          </svg>
-        </button>
+      const toolbar = document.createElement('div');
+      toolbar.id = 'deck-toolbar';
+      toolbar.innerHTML = `
+        <button id="deck-export-btn">Export</button>
+        <div id="deck-nav">
+          <button id="deck-prev" title="Previous slide">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <span id="deck-counter"></span>
+          <button id="deck-next" title="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div></div>
       `;
-      controls.querySelector('#deck-prev').addEventListener('click', prev);
-      controls.querySelector('#deck-next').addEventListener('click', next);
-      document.body.appendChild(controls);
+      toolbar.querySelector('#deck-export-btn').addEventListener('click', exportStandalone);
+      toolbar.querySelector('#deck-prev').addEventListener('click', prev);
+      toolbar.querySelector('#deck-next').addEventListener('click', next);
+      document.body.appendChild(toolbar);
+
+      // swipe support
+      let touchStartX = 0;
+      root.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+      root.addEventListener('touchend', e => {
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 50) dx < 0 ? next() : prev();
+      });
 
       document.addEventListener('keydown', e => {
         switch (e.key) {

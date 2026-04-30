@@ -2,7 +2,7 @@ Deck.slide({
   id: 'orbit',
   style: `
     .orbit-stage {
-      width: clamp(180px, 45cqw, 380px);
+      width: 380px;
       aspect-ratio: 1;
       margin-top: 1rem;
     }

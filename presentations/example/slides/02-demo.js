@@ -4,9 +4,9 @@ Deck.slide({
     .demo-grid {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: clamp(6px, 1.5cqw, 14px);
+      gap: 14px;
       margin-top: 1.5rem;
-      width: clamp(160px, 40cqw, 320px);
+      width: 320px;
     }
     .demo-dot {
       aspect-ratio: 1;

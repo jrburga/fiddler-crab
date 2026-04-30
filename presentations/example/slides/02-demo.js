@@ -1,5 +1,6 @@
 Deck.slide({
   id: 'animation-demo',
+  title: 'Wave Animation',
   style: `
     .demo-grid {
       display: grid;

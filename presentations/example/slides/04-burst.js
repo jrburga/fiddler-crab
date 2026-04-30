@@ -1,5 +1,6 @@
 Deck.slide({
   id: 'burst',
+  title: 'Burst (One-shot)',
   style: `
     .burst-stage {
       position: relative;

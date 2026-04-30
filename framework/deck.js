@@ -50,8 +50,11 @@
   }
 
   function updateCounter() {
-    const el = document.getElementById('deck-counter');
-    if (el) el.textContent = `${currentIndex + 1} / ${registry.length}`;
+    const text = `${currentIndex + 1} / ${registry.length}`;
+    const c1 = document.getElementById('deck-counter');
+    const c2 = document.getElementById('deck-counter-end');
+    if (c1) c1.textContent = text;
+    if (c2) c2.textContent = text;
   }
 
   function updatePlayBtn() {
@@ -59,6 +62,9 @@
     if (!btn) return;
     const slide = registry[currentIndex];
     const hasAnim = slide && typeof slide.animation === 'object';
+    // center slot: counter when no animation, play button when animation
+    document.getElementById('deck-counter').style.display = hasAnim ? 'none' : '';
+    document.getElementById('deck-counter-end').style.display = hasAnim ? '' : 'none';
     btn.style.display = hasAnim ? 'flex' : 'none';
     btn.innerHTML = isPlaying ? STOP_SVG : PLAY_SVG;
     btn.title = isPlaying ? 'Stop' : 'Play animation';
@@ -184,6 +190,7 @@
             </svg>
           </button>
           <span id="deck-counter"></span>
+          <button id="deck-play" style="display:none"></button>
           <button id="deck-next" title="Next">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="9 18 15 12 9 6"></polyline>
@@ -191,7 +198,7 @@
           </button>
         </div>
         <div id="deck-toolbar-end">
-          <button id="deck-play" style="display:none"></button>
+          <span id="deck-counter-end" style="display:none"></span>
         </div>
       `;
       toolbar.querySelector('#deck-export-btn').addEventListener('click', exportStandalone);

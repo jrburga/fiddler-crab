@@ -96,15 +96,6 @@ body {
   gap: 10px;
 }
 
-#deck-counter {
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 0.8rem;
-  font-family: 'Monaco', 'Menlo', monospace;
-  letter-spacing: 0.05em;
-  min-width: 3rem;
-  text-align: center;
-}
-
 #deck-nav button,
 #deck-play {
   width: 44px;

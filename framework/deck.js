@@ -11,6 +11,13 @@
   let root = null;
   let slideStyleEl = null;
 
+  function updateScale() {
+    if (!root) return;
+    const scale = Math.min(root.offsetWidth / 1600, root.offsetHeight / 900);
+    const el = root.querySelector('.deck-slide');
+    if (el) el.style.transform = `translate(-50%, -50%) scale(${scale})`;
+  }
+
   function renderSlide(index) {
     const slide = registry[index];
     if (!slide) return;
@@ -39,6 +46,7 @@
 
     updateCounter();
     updatePlayBtn();
+    updateScale();
   }
 
   function updateCounter() {
@@ -54,6 +62,7 @@
     btn.style.display = hasAnim ? 'flex' : 'none';
     btn.innerHTML = isPlaying ? STOP_SVG : PLAY_SVG;
     btn.title = isPlaying ? 'Stop' : 'Play animation';
+    btn.classList.toggle('playing', isPlaying);
   }
 
   function playAnimation() {
@@ -190,6 +199,8 @@
       toolbar.querySelector('#deck-next').addEventListener('click', next);
       toolbar.querySelector('#deck-play').addEventListener('click', toggleAnimation);
       document.body.appendChild(toolbar);
+
+      window.addEventListener('resize', updateScale);
 
       // swipe support
       let touchStartX = 0;

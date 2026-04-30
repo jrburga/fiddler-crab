@@ -13,18 +13,24 @@ html, body {
   color: #e0e0e0;
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+}
+
 #deck-root {
-  width: 100%;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .deck-slide {
   width: 960px;
   max-width: 90vw;
-  padding: 64px;
+  padding: 48px;
 }
 
 .deck-slide h1 {
@@ -63,49 +69,36 @@ html, body {
   font-weight: 600;
 }
 
+/* Toolbar */
+#deck-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 60px;
+  flex-shrink: 0;
+  border-top: 1px solid #1e1e1e;
+  background: #0f0f0f;
+}
+
+#deck-nav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 #deck-counter {
-  position: fixed;
-  bottom: 1.5rem;
-  right: 2rem;
-  color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.3);
   font-size: 0.8rem;
   font-family: 'Monaco', 'Menlo', monospace;
-  pointer-events: none;
   letter-spacing: 0.05em;
+  min-width: 3rem;
+  text-align: center;
 }
 
-#deck-export-btn {
-  position: fixed;
-  bottom: 1.25rem;
-  left: 2rem;
-  padding: 6px 14px;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  font-size: 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-#deck-export-btn:hover {
-  background: #1a1a1a;
-  color: #e0e0e0;
-  border-color: #333;
-}
-
-#deck-controls {
-  position: fixed;
-  bottom: 1.25rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
-}
-
-#deck-controls button {
-  width: 48px;
-  height: 48px;
+#deck-nav button {
+  width: 44px;
+  height: 44px;
   padding: 0;
   background: #1a1a1a;
   color: #999;
@@ -116,17 +109,36 @@ html, body {
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
-#deck-controls button:hover {
+#deck-nav button:hover {
   background: #2a2a2a;
   border-color: #444;
   color: #e0e0e0;
 }
 
-#deck-controls button svg {
+#deck-nav button svg {
   width: 20px;
   height: 20px;
+}
+
+#deck-export-btn {
+  padding: 8px 14px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#deck-export-btn:hover {
+  background: #1a1a1a;
+  color: #e0e0e0;
+  border-color: #333;
 }
 
 /* Transition helpers for use in slides */

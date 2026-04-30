@@ -23,11 +23,19 @@ body {
 #deck-topbar {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 1.25rem;
   height: var(--toolbar-height);
   flex-shrink: 0;
   border-bottom: 1px solid #1e1e1e;
   background: #0f0f0f;
+}
+
+#deck-version {
+  font-size: 0.75rem;
+  font-family: 'Monaco', 'Menlo', monospace;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.04em;
 }
 
 #deck-menu-btn {

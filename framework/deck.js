@@ -3,6 +3,7 @@
 
   const PLAY_SVG = `<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`;
   const STOP_SVG = `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>`;
+  const MENU_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
 
   const registry = [];
   let currentIndex = 0;
@@ -46,7 +47,22 @@
 
     updateCounter();
     updatePlayBtn();
+    updateMenuActive();
     updateScale();
+  }
+
+  function openMenu() {
+    document.getElementById('deck-menu').classList.add('open');
+  }
+
+  function closeMenu() {
+    document.getElementById('deck-menu').classList.remove('open');
+  }
+
+  function updateMenuActive() {
+    document.querySelectorAll('.deck-menu-item').forEach((item, i) => {
+      item.classList.toggle('active', i === currentIndex);
+    });
   }
 
   function updateCounter() {
@@ -174,12 +190,46 @@
     },
 
     start() {
+      // topbar
+      const topbar = document.createElement('div');
+      topbar.id = 'deck-topbar';
+      topbar.innerHTML = `<button id="deck-menu-btn" title="Slides">${MENU_SVG}</button>`;
+      document.body.appendChild(topbar);
+
       root = document.getElementById('deck-root');
       if (!root) {
         root = document.createElement('div');
         root.id = 'deck-root';
-        document.body.prepend(root);
+        document.body.appendChild(root);
       }
+
+      // slide menu overlay
+      const menu = document.createElement('div');
+      menu.id = 'deck-menu';
+      menu.innerHTML = `
+        <div id="deck-menu-panel">
+          <div id="deck-menu-header">Slides</div>
+          <div id="deck-menu-list">
+            ${registry.map((slide, i) => `
+              <div class="deck-menu-item" data-index="${i}">
+                <span class="deck-menu-item-num">${i + 1}</span>
+                <span class="deck-menu-item-title">${slide.title || slide.id || `Slide ${i + 1}`}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div id="deck-menu-backdrop"></div>
+      `;
+      menu.querySelector('#deck-menu-backdrop').addEventListener('click', closeMenu);
+      menu.querySelectorAll('.deck-menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+          goTo(parseInt(item.dataset.index, 10));
+          closeMenu();
+        });
+      });
+      document.body.appendChild(menu);
+
+      topbar.querySelector('#deck-menu-btn').addEventListener('click', openMenu);
 
       const toolbar = document.createElement('div');
       toolbar.id = 'deck-toolbar';
@@ -231,6 +281,9 @@
           case 'ArrowUp':
             e.preventDefault();
             prev();
+            break;
+          case 'Escape':
+            closeMenu();
             break;
         }
       });

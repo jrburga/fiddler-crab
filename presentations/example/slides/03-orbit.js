@@ -1,5 +1,6 @@
 Deck.slide({
   id: 'orbit',
+  title: 'Orbit (Looping)',
   style: `
     .orbit-stage {
       width: 380px;

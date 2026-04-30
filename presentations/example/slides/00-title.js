@@ -1,5 +1,6 @@
 Deck.slide({
   id: 'title',
+  title: 'Introduction',
   render(el) {
     el.innerHTML = `
       <h1>fiddler-crab</h1>

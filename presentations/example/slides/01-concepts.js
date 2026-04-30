@@ -1,5 +1,6 @@
 Deck.slide({
   id: 'concepts',
+  title: 'How It Works',
   style: `
     .deck-slide code {
       background: #1a2a3a;

@@ -19,6 +19,153 @@ body {
   color: #e0e0e0;
 }
 
+/* Topbar */
+#deck-topbar {
+  display: flex;
+  align-items: center;
+  padding: 0 1.25rem;
+  height: var(--toolbar-height);
+  flex-shrink: 0;
+  border-bottom: 1px solid #1e1e1e;
+  background: #0f0f0f;
+}
+
+#deck-menu-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  color: #666;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#deck-menu-btn:hover {
+  background: #1a1a1a;
+  color: #e0e0e0;
+}
+
+#deck-menu-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Slide menu overlay */
+#deck-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  pointer-events: none;
+}
+
+#deck-menu.open {
+  pointer-events: auto;
+}
+
+#deck-menu-panel {
+  width: 33%;
+  min-width: 220px;
+  max-width: 360px;
+  height: 100%;
+  background: #141414;
+  border-right: 1px solid #2a2a2a;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  overflow: hidden;
+}
+
+#deck-menu.open #deck-menu-panel {
+  transform: translateX(0);
+}
+
+#deck-menu-backdrop {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+#deck-menu.open #deck-menu-backdrop {
+  opacity: 1;
+}
+
+#deck-menu-header {
+  padding: 1.1rem 1.25rem 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #555;
+  border-bottom: 1px solid #222;
+  flex-shrink: 0;
+}
+
+#deck-menu-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+}
+
+#deck-menu-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+#deck-menu-list::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 2px;
+}
+
+.deck-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.deck-menu-item:hover {
+  background: #1e1e1e;
+}
+
+.deck-menu-item.active {
+  background: #1a2a3a;
+}
+
+.deck-menu-item-num {
+  font-size: 0.7rem;
+  font-family: 'Monaco', 'Menlo', monospace;
+  color: #444;
+  min-width: 1.5rem;
+  text-align: right;
+}
+
+.deck-menu-item.active .deck-menu-item-num {
+  color: #4a9eff;
+}
+
+.deck-menu-item-title {
+  font-size: 0.875rem;
+  color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deck-menu-item.active .deck-menu-item-title {
+  color: #e0e0e0;
+}
+
 #deck-root {
   flex: 1;
   min-height: 0;

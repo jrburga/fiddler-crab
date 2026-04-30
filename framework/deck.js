@@ -59,7 +59,7 @@
     if (!btn) return;
     const slide = registry[currentIndex];
     const hasAnim = slide && typeof slide.animation === 'object';
-    btn.style.display = hasAnim ? 'flex' : 'none';
+    btn.style.visibility = hasAnim ? 'visible' : 'hidden';
     btn.innerHTML = isPlaying ? STOP_SVG : PLAY_SVG;
     btn.title = isPlaying ? 'Stop' : 'Play animation';
     btn.classList.toggle('playing', isPlaying);
@@ -191,7 +191,7 @@
               <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
           </button>
-          <button id="deck-play" style="display:none"></button>
+          <button id="deck-play" style="visibility:hidden"></button>
           <button id="deck-next" title="Next">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="9 18 15 12 9 6"></polyline>

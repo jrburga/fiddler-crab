@@ -1,0 +1,107 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0f0f0f;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+  color: #e0e0e0;
+}
+
+#deck-root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deck-slide {
+  width: 960px;
+  max-width: 90vw;
+  padding: 64px;
+}
+
+.deck-slide h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 0.4em;
+}
+
+.deck-slide h2 {
+  font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+  font-weight: 600;
+  margin-bottom: 0.6em;
+}
+
+.deck-slide p,
+.deck-slide li {
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  line-height: 1.65;
+  color: #b0b0b0;
+}
+
+.deck-slide ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 0.5em;
+}
+
+.deck-slide li {
+  padding: 0.35em 0;
+}
+
+.deck-slide li::before {
+  content: '→ ';
+  color: #4a9eff;
+  font-weight: 600;
+}
+
+#deck-counter {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 2rem;
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.8rem;
+  font-family: 'Monaco', 'Menlo', monospace;
+  pointer-events: none;
+  letter-spacing: 0.05em;
+}
+
+#deck-export-btn {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 2rem;
+  padding: 6px 14px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#deck-export-btn:hover {
+  background: #1a1a1a;
+  color: #e0e0e0;
+  border-color: #333;
+}
+
+/* Transition helpers for use in slides */
+.deck-hidden {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.deck-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
